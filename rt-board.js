@@ -33,22 +33,22 @@ class FoundationPile extends HTMLElement{
 
     dropHandler(e){
         // give true couse we have a drop
-        this.select(true);
+        this.select(board.selected,true);
     }
 
     dragenterHandler(e){
         
     }
 
-    select(drop=false){
+    select(card = board.selected ,drop=false){
         //see if thers a card selected and is it alowed here
-        if(board.selected.id){
-            if(this.check(board.selected)){
+        if(card.id){
+            if(this.check(card)){
                 board.moveCard(this,drop);
             }
             board.removeSelected();
         }else if(this.lastElementChild.nodeName == "RT-CARD"){
-            this.lastElementChild != board.selected? board.selectedCard(this.lastElementChild) : board.removeSelected() ;
+            this.lastElementChild != card? board.selectedCard(this.lastElementChild) : board.removeSelected() ;
         }else{
             board.removeSelected();
         }
@@ -61,7 +61,7 @@ class FoundationPile extends HTMLElement{
 
 }customElements.define("foundation-pile",FoundationPile);
 
-class PatienceField extends HTMLElement{
+class SolitaireField extends HTMLElement{
     constructor(){
         super();
 
@@ -165,7 +165,7 @@ class PatienceField extends HTMLElement{
         }
     }
 
-    //this is called when a card is taken from a patienceField
+    //this is called when a card is taken from a solitaireField
     flip(){
         //if thers a pref card check if its flipped then unflip if true
         if(this.lastElementChild){
@@ -190,7 +190,7 @@ class PatienceField extends HTMLElement{
         this.lastElementChild.flip()
     }
 
-}customElements.define("patience-field",PatienceField)
+}customElements.define("solitaire-field",SolitaireField)
 
 class Board extends HTMLElement{
     constructor(){
@@ -227,17 +227,17 @@ class Board extends HTMLElement{
             <foundation-pile id="hearts"></foundation-pile>
             <foundation-pile id="clubs"></foundation-pile>
             <foundation-pile id="diamonds"></foundation-pile>
-            <patience-field></patience-field>
-            <patience-field></patience-field>
-            <patience-field></patience-field>
-            <patience-field></patience-field>
-            <patience-field></patience-field>
-            <patience-field></patience-field>
-            <patience-field></patience-field>
+            <solitaire-field></solitaire-field>
+            <solitaire-field></solitaire-field>
+            <solitaire-field></solitaire-field>
+            <solitaire-field></solitaire-field>
+            <solitaire-field></solitaire-field>
+            <solitaire-field></solitaire-field>
+            <solitaire-field></solitaire-field>
         `;
             //deck maaken, huselen en verdelen over de elements
             const deck = this.firstElementChild.newDeck();
-            const fields = this.getElementsByTagName("patience-field");
+            const fields = this.getElementsByTagName("solitaire-field");
             for(let i = 0 ; i<7 ; i++){
                 const cards = [];
                 for(let x =0; x <=i; x++){
@@ -277,7 +277,7 @@ class Board extends HTMLElement{
                 case"FOUNDATION-PILE":
                     parentElement.select();
                 break;
-                case"PATIENCE-FIELD":
+                case"SOLITAIRE-FIELD":
                     parentElement.select(card);
                 break;
                 default:
@@ -296,7 +296,7 @@ class Board extends HTMLElement{
        this.selectedCard(card);
        
        //select siblings
-       if(card.nextElementSibling && card.parentElement.nodeName == "PATIENCE-FIELD"){
+       if(card.nextElementSibling && card.parentElement.nodeName == "SOLITAIRE-FIELD"){
            let nextCard = card.nextElementSibling;
            //go true all the cards below and put in the array
            while(nextCard.nodeName == "RT-CARD"){
@@ -346,13 +346,11 @@ class Board extends HTMLElement{
     
         }
         // to.append(...this.selectedSiblings);
-        if(prev.nodeName == "PATIENCE-FIELD"){
+        if(prev.nodeName == "SOLITAIRE-FIELD"){
             flip =  prev.flip();
         }
         this.record(prev,to,card,this.selectedSiblings,flip);
-        if(this.checkWin()){
-            console.log("u won");
-        }
+        this.checkWin();
     }
     
     undoMove(){
@@ -411,7 +409,41 @@ class Board extends HTMLElement{
     checkWin(){
         const backCards = this.getElementsByClassName("flipped") ;
         const check = backCards.length == 0? true : false;
+        if(check){
+            console.log("player wins");
+            //todo add venster with victory screen and scores?
+            this.completeWin();
+        }
         return check;
+    }
+
+    //make all remaining cards animate to the foundation-piles
+    completeWin(){
+        const heartsPile = this.getElementById("hearts");
+        const spadesPile = this.getElementById("spades");
+        const clubsPile = this.getElementById("clubs");
+        const diamondsPile = this.getElementById("diamonds");
+        const cards = this.getElementsByTagName("rt-card");
+        for(const rank of values){
+            for(const card of cards){
+                if(card.parentElement.nodeName != "FOUNDATION-PILE" && card.rank == rank){
+                    switch(card.suit){
+                        case "hearts":
+                            heartsPile.select(card);
+                        break;
+                        case "spades":
+                            spadesPile.select(card);
+                        break;
+                        case "clubs":
+                            clubsPile.select(card);
+                        break;
+                        case "diamonds":
+                            diamondsPile.select(card);
+                        break;
+                    }
+                }
+            }
+        }
     }
 
 

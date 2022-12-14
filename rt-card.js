@@ -2,6 +2,7 @@
 
   github link
   https://github.com/playing-card/playing-card.github.io
+  https://github.com/solitaire-game/solitaire-game.github.io
 
     dannys examble
     https://cardmeister.github.io/

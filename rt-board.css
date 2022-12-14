@@ -13,13 +13,14 @@ rt-board{
     opacity: 0;
 }
 
-patience-field{
+solitaire-field{
     border: 2px solid rgb(65, 46, 46);
     display: grid;
     grid: 1fr/1fr;
+    min-height: var(--card-height);
 }
 
-patience-field rt-card{
+solitaire-field rt-card{
     grid-area: 1/1;
 }
 
@@ -35,74 +36,74 @@ rt-card:active{
     border: 1px dashed rgb(177, 23, 48);
 }
 
-patience-field rt-card:nth-of-type(2){
+solitaire-field rt-card:nth-of-type(2){
     top: var(--cardGap);
 }
 
-patience-field rt-card:nth-of-type(3){
+solitaire-field rt-card:nth-of-type(3){
     top: calc(2*var(--cardGap));
 }
 
-patience-field rt-card:nth-of-type(4){
+solitaire-field rt-card:nth-of-type(4){
     top: calc(3*var(--cardGap));
 }
 
-patience-field rt-card:nth-of-type(5){
+solitaire-field rt-card:nth-of-type(5){
     top: calc(4*var(--cardGap));
 }
 
-patience-field rt-card:nth-of-type(6){
+solitaire-field rt-card:nth-of-type(6){
     top: calc(5*var(--cardGap));
 }
 
-patience-field rt-card:nth-of-type(7){
+solitaire-field rt-card:nth-of-type(7){
     top: calc(6*var(--cardGap));
 }
 
-patience-field rt-card:nth-of-type(8){
+solitaire-field rt-card:nth-of-type(8){
     top: calc(7*var(--cardGap));
 }
 
-patience-field rt-card:nth-of-type(9){
+solitaire-field rt-card:nth-of-type(9){
     top: calc(8*var(--cardGap));
 }
 
-patience-field rt-card:nth-of-type(10){
+solitaire-field rt-card:nth-of-type(10){
     top: calc(9*var(--cardGap));
 }
 
-patience-field rt-card:nth-of-type(11){
+solitaire-field rt-card:nth-of-type(11){
     top: calc(10*var(--cardGap));
 }
 
-patience-field rt-card:nth-of-type(12){
+solitaire-field rt-card:nth-of-type(12){
     top: calc(11*var(--cardGap));
 }
 
-patience-field rt-card:nth-of-type(13){
+solitaire-field rt-card:nth-of-type(13){
     top: calc(12*var(--cardGap));
 }
 
-patience-field rt-card:nth-of-type(14){
+solitaire-field rt-card:nth-of-type(14){
     top: calc(13*var(--cardGap));
 }
 
-patience-field rt-card:nth-of-type(15){
+solitaire-field rt-card:nth-of-type(15){
     top: calc(14*var(--cardGap));
 }
 
-patience-field rt-card:nth-of-type(16){
+solitaire-field rt-card:nth-of-type(16){
     top: calc(15*var(--cardGap));
 }
 
-patience-field rt-card:nth-of-type(17){
+solitaire-field rt-card:nth-of-type(17){
     top: calc(16*var(--cardGap));
 }
 
-patience-field rt-card:nth-of-type(18){
+solitaire-field rt-card:nth-of-type(18){
     top: calc(17*var(--cardGap));
 }
 
-patience-field rt-card:nth-of-type(19){
+solitaire-field rt-card:nth-of-type(19){
     top: calc(18*var(--cardGap));
 }
