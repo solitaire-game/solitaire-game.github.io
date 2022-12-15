@@ -28,13 +28,12 @@ foundation-pile rt-card{
     position: absolute;
 }
 
-rt-board #selected{
-    border: 2px dashed pink;
+rt-board #selected img{
+    box-shadow: 0 0 8px 3px rgb(217 186 186);
+    
 }
 
-rt-card:active{
-    border: 1px dashed rgb(177, 23, 48);
-}
+
 
 solitaire-field rt-card:nth-of-type(2){
     top: var(--cardGap);

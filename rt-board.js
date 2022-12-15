@@ -249,7 +249,9 @@ class Board extends HTMLElement{
             this.firstElementChild.firstElementChild.init(deck);
             this.addEventListener("click", this.klickEvent.bind(this));
             this.addEventListener("dragstart", this.dragstartHandler.bind(this));
+            this.addEventListener("touchstart", this.dragstartHandler.bind(this));
             this.addEventListener("dragend", this.dragendHandler.bind(this));
+            this.addEventListener("touchend", this.dragendHandler.bind(this));
             this.init = 0;
         }
 
@@ -294,6 +296,7 @@ class Board extends HTMLElement{
        const card = e.target;
        drags.push(card);
        this.selectedCard(card);
+    //    console.log(e);
        
        //select siblings
        if(card.nextElementSibling && card.parentElement.nodeName == "SOLITAIRE-FIELD"){
@@ -308,13 +311,12 @@ class Board extends HTMLElement{
         }
         
         //add the hiding orignal element
+        //todo make div follow mouse put cards in div with from posistion
         setTimeout(function(){
             for(const drag of drags){
                 drag.classList.add("dragging");
             }
         });
-       //define drop effect
-       dt.effectAllowed ="move";
 
     }
 
@@ -466,7 +468,6 @@ class Board extends HTMLElement{
         }
         this.selectedSiblings = [];
     }
-
 
 }
 customElements.define("rt-board", Board);

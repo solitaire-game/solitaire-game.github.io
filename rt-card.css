@@ -6,6 +6,7 @@
 rt-card{
     display: inline-block;    
     position: relative;
+    border-radius: 5%;
 }
 
 card-t{
@@ -44,4 +45,8 @@ rt-card  .front, rt-card .back{
 
 rt-card  .back,rt-card .flipped{
   transform:rotateY(180deg);
+}
+
+.flipped .back{
+  z-index: 1;
 }
