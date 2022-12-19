@@ -24,6 +24,7 @@ class FoundationPile extends HTMLElement{
         this.addEventListener("dragenter", this.dragenterHandler.bind(this));
         this.addEventListener("dragover", this.dragoverHandler.bind(this));
         this.addEventListener("drop", this.dropHandler.bind(this));
+        this.addEventListener("ontouchend", this.dropHandler.bind(this));
     }
 
     dragoverHandler(e){
@@ -198,6 +199,7 @@ class Board extends HTMLElement{
         this.selected = document.createElement("rt-card");
         this.selectedSiblings = [];
         this.moves = [];
+        this.oldParent = "";
         this.init = 1;
     }
     connectedCallback(){
@@ -234,6 +236,7 @@ class Board extends HTMLElement{
             <solitaire-field></solitaire-field>
             <solitaire-field></solitaire-field>
             <solitaire-field></solitaire-field>
+            <solitaire-field id="dragdiv"></solitaire-field>
         `;
             //deck maaken, huselen en verdelen over de elements
             const deck = this.firstElementChild.newDeck();
@@ -250,6 +253,8 @@ class Board extends HTMLElement{
             this.addEventListener("click", this.klickEvent.bind(this));
             this.addEventListener("dragstart", this.dragstartHandler.bind(this));
             this.addEventListener("touchstart", this.dragstartHandler.bind(this));
+            document.addEventListener("dragover", this.onMouseMove.bind(this));
+            document.addEventListener("touchmove", this.onMouseMove.bind(this));
             this.addEventListener("dragend", this.dragendHandler.bind(this));
             this.addEventListener("touchend", this.dragendHandler.bind(this));
             this.init = 0;
@@ -291,12 +296,13 @@ class Board extends HTMLElement{
     }
 
     dragstartHandler(e){
-       const  dt = e.dataTransfer;
-       const drags = [];
-       const card = e.target;
-       drags.push(card);
-       this.selectedCard(card);
-    //    console.log(e);
+        const dt = e.dataTransfer
+        const drags = [];
+        const card = e.target;
+        this.oldParent = card.parentElement;
+        drags.push(card);
+        this.selectedCard(card);
+
        
        //select siblings
        if(card.nextElementSibling && card.parentElement.nodeName == "SOLITAIRE-FIELD"){
@@ -309,15 +315,42 @@ class Board extends HTMLElement{
                nextCard.nextElementSibling? nextCard = nextCard.nextElementSibling: nextCard = document.createElement("div");
             }
         }
+
+
         
-        //add the hiding orignal element
-        //todo make div follow mouse put cards in div with from posistion
+        //set the cards to follow mouse
+        const mdiv = document.getElementById("dragdiv");
+        //calc the position of the mouse on the card
+        const i = e.clientX? e : e.changedTouches[0] ;
+        const xline = i.clientX - e.target.getBoundingClientRect().x ;
+        const yline = i.clientY - e.target.getBoundingClientRect().y ;
+        mdiv.style.setProperty("--xline",`${xline}px`);
+        mdiv.style.setProperty("--yline",`${yline}px`);
+        mdiv.style.left = `calc(${e.clientX}px - var(--xline))`;
+        mdiv.style.top = `calc(${e.clientY}px - var(--yline))`;
+        //need a setTimeout otherwise the dragevent fails
         setTimeout(function(){
             for(const drag of drags){
-                drag.classList.add("dragging");
+                mdiv.append(drag);
             }
         });
 
+        //make a no ghost
+        const img = document.createElement("img");
+        if(e.type != "touchstart")dt.setDragImage(img,0,0);
+
+    }
+
+    onMouseMove(e){
+        const mdiv = document.getElementById("dragdiv");
+        if(e.clientX){
+            mdiv.style.left = `calc(${e.clientX}px - var(--xline))`;
+            mdiv.style.top = `calc(${e.clientY}px - var(--yline))`;
+        }else{
+            mdiv.style.left = `calc(${e.changedTouches[0].clientX}px - var(--xline))`;
+            mdiv.style.top = `calc(${e.changedTouches[0].clientY}px - var(--yline))`;
+        }
+        return false;
     }
 
     dragendHandler(e){
@@ -326,13 +359,14 @@ class Board extends HTMLElement{
     }
 
 
+
     record(from , to ,card, siblings,flip){
         this.moves.push([from,to,card,siblings,flip]);
     }
 
     moveCard(to, drop = false){
         const card = this.selected;
-        const prev = card.parentElement;
+        const prev = card.parentElement != document.getElementById("dragdiv")? card.parentElement : this.oldParent ;
         let flip = 0
         drop == false ? this.animateCard(card.parentElement,to,card): to.append(card);
         if(this.selectedSiblings.length > 0){
@@ -383,6 +417,7 @@ class Board extends HTMLElement{
         }else{
             //todo send msg to user to tell thers no moves to undo 
             console.log("no undomoves");
+            alert("no undo moves");
         }
     }
 
@@ -412,23 +447,26 @@ class Board extends HTMLElement{
         const backCards = this.getElementsByClassName("flipped") ;
         const check = backCards.length == 0? true : false;
         if(check){
-            console.log("player wins");
             //todo add venster with victory screen and scores?
+            console.log("player wins");
+            alert("u won");
             this.completeWin();
         }
         return check;
     }
 
     //make all remaining cards animate to the foundation-piles
+    //todo add slow to animate it
     completeWin(){
-        const heartsPile = this.getElementById("hearts");
-        const spadesPile = this.getElementById("spades");
-        const clubsPile = this.getElementById("clubs");
-        const diamondsPile = this.getElementById("diamonds");
-        const cards = this.getElementsByTagName("rt-card");
+        const heartsPile = document.getElementById("hearts");
+        const spadesPile = document.getElementById("spades");
+        const clubsPile = document.getElementById("clubs");
+        const diamondsPile = document.getElementById("diamonds");
+        const cards = document.getElementsByTagName("rt-card");
         for(const rank of values){
             for(const card of cards){
                 if(card.parentElement.nodeName != "FOUNDATION-PILE" && card.rank == rank){
+                    this.selectedCard(card);
                     switch(card.suit){
                         case "hearts":
                             heartsPile.select(card);
@@ -460,6 +498,12 @@ class Board extends HTMLElement{
     }
 
     removeSelected(){
+        // return the cards to corect place if drag was ended unsucsesful
+        if(this.selected.parentElement == document.getElementById("dragdiv")){
+            this.oldParent.append(this.selected);
+            this.oldParent.append(...this.selectedSiblings); 
+            this.oldParent = "";
+        }
         this.selected.removeSelect();
         this.selected = document.createElement("rt-card");
         for(const card of this.selectedSiblings){

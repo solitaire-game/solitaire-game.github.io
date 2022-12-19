@@ -9,15 +9,22 @@ rt-board{
     row-gap: 10px;
 }
 
-.dragging{
-    opacity: 0;
-}
-
 solitaire-field{
     border: 2px solid rgb(65, 46, 46);
+    min-height: var(--card-height);
     display: grid;
     grid: 1fr/1fr;
-    min-height: var(--card-height);
+}
+
+#dragdiv{
+    min-height: 0;
+    border: 0;
+    position: absolute;
+    pointer-events: none;
+}
+
+#dragdiv rt-card{
+    pointer-events: none;
 }
 
 solitaire-field rt-card{
