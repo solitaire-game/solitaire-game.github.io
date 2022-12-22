@@ -24,7 +24,7 @@ class FoundationPile extends HTMLElement{
         this.addEventListener("dragenter", this.dragenterHandler.bind(this));
         this.addEventListener("dragover", this.dragoverHandler.bind(this));
         this.addEventListener("drop", this.dropHandler.bind(this));
-        this.addEventListener("ontouchend", this.dropHandler.bind(this));
+        this.addEventListener("touchend", this.dropHandler.bind(this));
     }
 
     dragoverHandler(e){
@@ -72,6 +72,7 @@ class SolitaireField extends HTMLElement{
         this.addEventListener("dragenter", this.dragenterHandler.bind(this));
         this.addEventListener("dragover", this.dragoverHandler.bind(this));
         this.addEventListener("drop", this.dropHandler.bind(this));
+        this.addEventListener("touchend", this.dropHandler.bind(this));
     }
 
     dragoverHandler(e){
@@ -82,6 +83,7 @@ class SolitaireField extends HTMLElement{
     dropHandler(e){
         // give true couse we have a drop
         this.select(board.selected,true);
+        console.log("drop", this);
     }
 
     dragenterHandler(e){
@@ -303,6 +305,9 @@ class Board extends HTMLElement{
         drags.push(card);
         this.selectedCard(card);
 
+        //check if touchevent has a flipped card
+        if(card.draggable == false)return;
+
        
        //select siblings
        if(card.nextElementSibling && card.parentElement.nodeName == "SOLITAIRE-FIELD"){
@@ -326,8 +331,8 @@ class Board extends HTMLElement{
         const yline = i.clientY - e.target.getBoundingClientRect().y ;
         mdiv.style.setProperty("--xline",`${xline}px`);
         mdiv.style.setProperty("--yline",`${yline}px`);
-        mdiv.style.left = `calc(${e.clientX}px - var(--xline))`;
-        mdiv.style.top = `calc(${e.clientY}px - var(--yline))`;
+        mdiv.style.left = `calc(${i.clientX}px - var(--xline))`;
+        mdiv.style.top = `calc(${i.clientY}px - var(--yline))`;
         //need a setTimeout otherwise the dragevent fails
         setTimeout(function(){
             for(const drag of drags){
@@ -354,7 +359,7 @@ class Board extends HTMLElement{
     }
 
     dragendHandler(e){
-        e.target.classList.remove("dragging");
+        console.log("board",e);
         this.removeSelected();
     }
 
@@ -508,7 +513,6 @@ class Board extends HTMLElement{
         this.selected = document.createElement("rt-card");
         for(const card of this.selectedSiblings){
             card.removeSelect();
-            card.classList.remove("dragging");
         }
         this.selectedSiblings = [];
     }

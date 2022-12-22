@@ -21,6 +21,7 @@ solitaire-field{
     border: 0;
     position: absolute;
     pointer-events: none;
+    touch-action: none;
 }
 
 #dragdiv rt-card{
