@@ -24,7 +24,7 @@ class FoundationPile extends HTMLElement{
         this.addEventListener("dragenter", this.dragenterHandler.bind(this));
         this.addEventListener("dragover", this.dragoverHandler.bind(this));
         this.addEventListener("drop", this.dropHandler.bind(this));
-        this.addEventListener("touchend", this.dropHandler.bind(this));
+        // this.addEventListener("touchend", this.dropHandler.bind(this));
     }
 
     dragoverHandler(e){
@@ -72,7 +72,7 @@ class SolitaireField extends HTMLElement{
         this.addEventListener("dragenter", this.dragenterHandler.bind(this));
         this.addEventListener("dragover", this.dragoverHandler.bind(this));
         this.addEventListener("drop", this.dropHandler.bind(this));
-        this.addEventListener("touchend", this.dropHandler.bind(this));
+        // this.addEventListener("touchend", this.dropHandler.bind(this));
     }
 
     dragoverHandler(e){
@@ -258,7 +258,7 @@ class Board extends HTMLElement{
             document.addEventListener("dragover", this.onMouseMove.bind(this));
             document.addEventListener("touchmove", this.onMouseMove.bind(this));
             this.addEventListener("dragend", this.dragendHandler.bind(this));
-            this.addEventListener("touchend", this.dragendHandler.bind(this));
+            this.addEventListener("touchend", this.touchendHandler.bind(this));
             this.init = 0;
         }
 
@@ -359,8 +359,17 @@ class Board extends HTMLElement{
     }
 
     dragendHandler(e){
-        console.log("board",e);
         this.removeSelected();
+    }
+    
+    touchendHandler(e){
+        let endElement = document.elementFromPoint(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
+        if(endElement.nodeName == "RT-CARD")endElement = endElement.parentElement;
+        if(endElement.nodeName == "FOUNDATION-PILE" || endElement.nodeName == "SOLITAIRE-FIELD"){
+            endElement.select(this.selected,true);
+        }else{
+            this.removeSelected();
+        }
     }
 
 
