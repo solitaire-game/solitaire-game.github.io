@@ -6,7 +6,7 @@ import "./rt-deck.js";
 import {Card, suits,values} from "./rt-card.js";
 const board = document.querySelector("rt-board");
 
-
+//! telraam voor tijd van dag aan onderdeelen als sterchart.
 
 class FoundationPile extends HTMLElement{
     constructor(id){
@@ -83,7 +83,6 @@ class SolitaireField extends HTMLElement{
     dropHandler(e){
         // give true couse we have a drop
         this.select(board.selected,true);
-        console.log("drop", this);
     }
 
     dragenterHandler(e){
@@ -92,11 +91,12 @@ class SolitaireField extends HTMLElement{
 
     select(card, drag = false){
         //see if we want to place or select a card
-        if(board.selected.id){
-          this.placeCard(drag);
-        }else if(this.lastElementChild){
-           this.selectCard(card);
-        }
+        console.log("select");
+            if(board.selected.id){
+              this.placeCard(drag);
+            }else if(this.lastElementChild){
+               this.selectCard(card);
+            }
     }
 
     placeCard(drag){
@@ -129,6 +129,7 @@ class SolitaireField extends HTMLElement{
                 }
             }
         }else{
+            console.log("selectcard");
             board.removeSelected() ;
         } 
     }
@@ -201,6 +202,7 @@ class Board extends HTMLElement{
         this.selected = document.createElement("rt-card");
         this.selectedSiblings = [];
         this.moves = [];
+        this.redoMoves = [];
         this.oldParent = "";
         this.init = 1;
     }
@@ -226,6 +228,8 @@ class Board extends HTMLElement{
             <fieldset>
             <legend>options</legend>
             <button onclick="document.querySelector('rt-board').undoMove()"><p>undo</P></button>
+            <span id="undoinfo"></span>
+            <button onclick="document.querySelector('rt-board').redoMove()"><p>redo</P></button>
             </fieldset>
             <foundation-pile id="spades"></foundation-pile>
             <foundation-pile id="hearts"></foundation-pile>
@@ -302,47 +306,61 @@ class Board extends HTMLElement{
         const drags = [];
         const card = e.target;
         this.oldParent = card.parentElement;
-        drags.push(card);
-        this.selectedCard(card);
+        if(card.draggable && card.nodeName == "RT-CARD"){
 
-        //check if touchevent has a flipped card
-        if(card.draggable == false)return;
-
-       
-       //select siblings
-       if(card.nextElementSibling && card.parentElement.nodeName == "SOLITAIRE-FIELD"){
-           let nextCard = card.nextElementSibling;
-           //go true all the cards below and put in the array
-           while(nextCard.nodeName == "RT-CARD"){
-               this.selectedSiblings.push(nextCard);
-               drags.push(nextCard);
-               nextCard.select();
-               nextCard.nextElementSibling? nextCard = nextCard.nextElementSibling: nextCard = document.createElement("div");
+            if(card == this.selected)this.removeSelected();
+            drags.push(card);
+            this.selectedCard(card);
+    
+            //check if touchevent has a flipped card
+    
+           
+           //select siblings
+           if(card.nextElementSibling && card.parentElement.nodeName == "SOLITAIRE-FIELD"){
+               let nextCard = card.nextElementSibling;
+               //go true all the cards below and put in the array
+               while(nextCard.nodeName == "RT-CARD"){
+                   this.selectedSiblings.push(nextCard);
+                   drags.push(nextCard);
+                   nextCard.select();
+                   nextCard.nextElementSibling? nextCard = nextCard.nextElementSibling: nextCard = document.createElement("div");
+                }
             }
+    
+    
+            
+            //set the cards to follow mouse
+            const mdiv = document.getElementById("dragdiv");
+            //calc the position of the mouse on the card
+            const i = e.clientX? e : e.changedTouches[0] ;
+            const xline = i.clientX - e.target.getBoundingClientRect().x ;
+            const yline = i.clientY - e.target.getBoundingClientRect().y ;
+            mdiv.style.setProperty("--xline",`${xline}px`);
+            mdiv.style.setProperty("--yline",`${yline}px`);
+            mdiv.style.left = `calc(${i.clientX}px - var(--xline))`;
+            mdiv.style.top = `calc(${i.clientY}px - var(--yline))`;
+            
+            //make a no ghost
+            if(e.type != "touchstart"){
+                //need a setTimeout otherwise the dragevent fails
+                setTimeout(function(){
+                    for(const drag of drags){
+                        mdiv.append(drag);
+                    }
+                });
+                
+                const img = document.createElement("img");
+                dt.setDragImage(img,0,0);
+            }else{
+                // no delay for the touch event
+                    for(const drag of drags){
+                        mdiv.append(drag);
+                    }
+            }
+        }else{
+            // when no dragable card element found
+            return;
         }
-
-
-        
-        //set the cards to follow mouse
-        const mdiv = document.getElementById("dragdiv");
-        //calc the position of the mouse on the card
-        const i = e.clientX? e : e.changedTouches[0] ;
-        const xline = i.clientX - e.target.getBoundingClientRect().x ;
-        const yline = i.clientY - e.target.getBoundingClientRect().y ;
-        mdiv.style.setProperty("--xline",`${xline}px`);
-        mdiv.style.setProperty("--yline",`${yline}px`);
-        mdiv.style.left = `calc(${i.clientX}px - var(--xline))`;
-        mdiv.style.top = `calc(${i.clientY}px - var(--yline))`;
-        //need a setTimeout otherwise the dragevent fails
-        setTimeout(function(){
-            for(const drag of drags){
-                mdiv.append(drag);
-            }
-        });
-
-        //make a no ghost
-        const img = document.createElement("img");
-        if(e.type != "touchstart")dt.setDragImage(img,0,0);
 
     }
 
@@ -366,6 +384,7 @@ class Board extends HTMLElement{
         let endElement = document.elementFromPoint(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
         if(endElement.nodeName == "RT-CARD")endElement = endElement.parentElement;
         if(endElement.nodeName == "FOUNDATION-PILE" || endElement.nodeName == "SOLITAIRE-FIELD"){
+            console.log("touchend");
             endElement.select(this.selected,true);
         }else{
             this.removeSelected();
@@ -379,6 +398,9 @@ class Board extends HTMLElement{
     }
 
     moveCard(to, drop = false){
+        //clear the undoinfo if ther is any
+        document.getElementById("undoinfo").innerText = "";
+
         const card = this.selected;
         const prev = card.parentElement != document.getElementById("dragdiv")? card.parentElement : this.oldParent ;
         let flip = 0
@@ -404,6 +426,8 @@ class Board extends HTMLElement{
     }
     
     undoMove(){
+        const undoMsgField = document.getElementById("undoinfo");
+        undoMsgField.innerText = "";
         if(this.moves.length > 0){
             const lastmove = this.moves.pop();
             const drawPile = this.querySelector("draw-pile");
@@ -429,12 +453,13 @@ class Board extends HTMLElement{
             }
             
         }else{
-            //todo send msg to user to tell thers no moves to undo 
-            console.log("no undomoves");
-            alert("no undo moves");
+            undoMsgField.innerText = "no undomoves";
         }
     }
-
+    
+    redoMove(){
+        //todo
+    }
     animateCard(from , to , card, gap = 0){
         const [x0,y0] = [card.getBoundingClientRect().x,card.getBoundingClientRect().y];
         to.append(card);
@@ -453,24 +478,20 @@ class Board extends HTMLElement{
         to.append(card);
     }
 
-    redoMove(){
-        //todo
-    }
 
     checkWin(){
         const backCards = this.getElementsByClassName("flipped") ;
         const check = backCards.length == 0? true : false;
         if(check){
             //todo add venster with victory screen and scores?
-            console.log("player wins");
-            alert("u won");
             this.completeWin();
+            console.log("player wins");
+            // alert("u won");
         }
         return check;
     }
 
     //make all remaining cards animate to the foundation-piles
-    //todo add slow to animate it
     completeWin(){
         const heartsPile = document.getElementById("hearts");
         const spadesPile = document.getElementById("spades");
@@ -514,6 +535,7 @@ class Board extends HTMLElement{
     removeSelected(){
         // return the cards to corect place if drag was ended unsucsesful
         if(this.selected.parentElement == document.getElementById("dragdiv")){
+            console.log("removeselected");
             this.oldParent.append(this.selected);
             this.oldParent.append(...this.selectedSiblings); 
             this.oldParent = "";

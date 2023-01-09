@@ -7,6 +7,12 @@ rt-board{
     grid-template-rows: var(--card-height) 1fr;
     column-gap: 10px;
     row-gap: 10px;
+    font-size: 14px;
+}
+
+rt-board button{
+    font-size: 12px;
+    border-radius: 1px;
 }
 
 solitaire-field{
