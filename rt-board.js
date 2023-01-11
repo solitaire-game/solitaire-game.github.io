@@ -1,13 +1,10 @@
-/*
-js element animate link search
-https://www.google.com/search?q=move+elements+with+the+animation+api&rlz=1C1GCEA_en&oq=move+elements+with+the+animation+api&aqs=chrome..69i57j33i160.8671j0j4&sourceid=chrome&ie=UTF-8
-*/
 import "./rt-deck.js";
 import {Card, suits,values} from "./rt-card.js";
 const board = document.querySelector("rt-board");
 
 //! telraam voor tijd van dag aan onderdeelen als sterchart.
 
+//foundationpile is de locatie waar de suits op eindige ec alle harten van aas tot koning
 class FoundationPile extends HTMLElement{
     constructor(id){
         super();
@@ -21,26 +18,23 @@ class FoundationPile extends HTMLElement{
             <card-t cid="f${this.id.charAt(0)}" rank="-1"></card-t>
         `;
 
-        this.addEventListener("dragenter", this.dragenterHandler.bind(this));
+        //add eventlisters for dragin and touching functions
         this.addEventListener("dragover", this.dragoverHandler.bind(this));
         this.addEventListener("drop", this.dropHandler.bind(this));
-        // this.addEventListener("touchend", this.dropHandler.bind(this));
     }
 
+    //preventdefoult to start alowing a drop
     dragoverHandler(e){
         e.preventDefault();
         return false;
     }
 
     dropHandler(e){
-        // give true couse we have a drop
+        // give true couse we have a drop logic for alowing the card is in the select
         this.select(board.selected,true);
     }
 
-    dragenterHandler(e){
-        
-    }
-
+    //select core function to see if card is alowed
     select(card = board.selected ,drop=false){
         //see if thers a card selected and is it alowed here
         if(card.id){
@@ -69,10 +63,8 @@ class SolitaireField extends HTMLElement{
     }
 
     connectedCallback(){
-        this.addEventListener("dragenter", this.dragenterHandler.bind(this));
         this.addEventListener("dragover", this.dragoverHandler.bind(this));
         this.addEventListener("drop", this.dropHandler.bind(this));
-        // this.addEventListener("touchend", this.dropHandler.bind(this));
     }
 
     dragoverHandler(e){
@@ -83,10 +75,6 @@ class SolitaireField extends HTMLElement{
     dropHandler(e){
         // give true couse we have a drop
         this.select(board.selected,true);
-    }
-
-    dragenterHandler(e){
-        
     }
 
     select(card, drag = false){
@@ -202,7 +190,6 @@ class Board extends HTMLElement{
         this.selected = document.createElement("rt-card");
         this.selectedSiblings = [];
         this.moves = [];
-        this.redoMoves = [];
         this.oldParent = "";
         this.init = 1;
     }
@@ -229,7 +216,6 @@ class Board extends HTMLElement{
             <legend>options</legend>
             <button onclick="document.querySelector('rt-board').undoMove()"><p>undo</P></button>
             <span id="undoinfo"></span>
-            <button onclick="document.querySelector('rt-board').redoMove()"><p>redo</P></button>
             </fieldset>
             <foundation-pile id="spades"></foundation-pile>
             <foundation-pile id="hearts"></foundation-pile>
@@ -306,14 +292,13 @@ class Board extends HTMLElement{
         const drags = [];
         const card = e.target;
         this.oldParent = card.parentElement;
+        //check if the draged element is a card thats dragable
         if(card.draggable && card.nodeName == "RT-CARD"){
 
+            //to fix a bug we need to remove selected if it was already selected
             if(card == this.selected)this.removeSelected();
             drags.push(card);
-            this.selectedCard(card);
-    
-            //check if touchevent has a flipped card
-    
+            this.selectedCard(card);   
            
            //select siblings
            if(card.nextElementSibling && card.parentElement.nodeName == "SOLITAIRE-FIELD"){
@@ -326,9 +311,7 @@ class Board extends HTMLElement{
                    nextCard.nextElementSibling? nextCard = nextCard.nextElementSibling: nextCard = document.createElement("div");
                 }
             }
-    
-    
-            
+     
             //set the cards to follow mouse
             const mdiv = document.getElementById("dragdiv");
             //calc the position of the mouse on the card
@@ -340,7 +323,6 @@ class Board extends HTMLElement{
             mdiv.style.left = `calc(${i.clientX}px - var(--xline))`;
             mdiv.style.top = `calc(${i.clientY}px - var(--yline))`;
             
-            //make a no ghost
             if(e.type != "touchstart"){
                 //need a setTimeout otherwise the dragevent fails
                 setTimeout(function(){
@@ -349,6 +331,7 @@ class Board extends HTMLElement{
                     }
                 });
                 
+                //make a no ghost
                 const img = document.createElement("img");
                 dt.setDragImage(img,0,0);
             }else{
@@ -364,6 +347,7 @@ class Board extends HTMLElement{
 
     }
 
+    //make a div follow the mouse his div is where de draged cards end up in
     onMouseMove(e){
         const mdiv = document.getElementById("dragdiv");
         if(e.clientX){
@@ -376,10 +360,12 @@ class Board extends HTMLElement{
         return false;
     }
 
+    //if the drag ends where it shoundt be
     dragendHandler(e){
         this.removeSelected();
     }
     
+    //looks at where the touch is at the end and get the element there to see if it can be "dropped"
     touchendHandler(e){
         let endElement = document.elementFromPoint(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
         if(endElement.nodeName == "RT-CARD")endElement = endElement.parentElement;
@@ -457,9 +443,6 @@ class Board extends HTMLElement{
         }
     }
     
-    redoMove(){
-        //todo
-    }
     animateCard(from , to , card, gap = 0){
         const [x0,y0] = [card.getBoundingClientRect().x,card.getBoundingClientRect().y];
         to.append(card);
@@ -483,10 +466,8 @@ class Board extends HTMLElement{
         const backCards = this.getElementsByClassName("flipped") ;
         const check = backCards.length == 0? true : false;
         if(check){
-            //todo add venster with victory screen and scores?
             this.completeWin();
             console.log("player wins");
-            // alert("u won");
         }
         return check;
     }

@@ -1,5 +1,5 @@
 rt-deck{
-    grid-column: 1/ 3;
+    grid-column: 1/3;
     display: grid;
     grid-template-columns: repeat(2,var(--card-with));    
     grid-template-rows: var(--card-height);

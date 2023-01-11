@@ -3,16 +3,27 @@
 }
 rt-board{
     display: grid;
-    grid-template-columns: repeat(7,var(--card-with));    
-    grid-template-rows: var(--card-height) 1fr;
+    grid-template-columns: repeat(7,var(--card-with));
+    grid-template-rows: repeat(2,var(--card-height)) 1fr;
     column-gap: 10px;
     row-gap: 10px;
     font-size: 14px;
+    justify-content: center;
+}
+
+rt-board fieldset{
+    border-radius: 5px;
+    border-color: #81df1b;
+    border-width: 1px;
+    border-style: solid;
 }
 
 rt-board button{
     font-size: 12px;
     border-radius: 1px;
+    border: 1px solid #fff;
+    color: #ffffff;
+    background: #88b127;
 }
 
 solitaire-field{
@@ -20,6 +31,7 @@ solitaire-field{
     min-height: var(--card-height);
     display: grid;
     grid: 1fr/1fr;
+    grid-row: 2;
 }
 
 #dragdiv{
