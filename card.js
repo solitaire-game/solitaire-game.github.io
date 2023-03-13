@@ -14,7 +14,27 @@
     backend deck api
     https://www.deckofcardsapi.com/
 
+    play-card atributes
+
+      back      gives the back color
+      suit      give the card suit
+      rank      give the card rank 
+      cid       give rank and first char of suit
+
 */
+import { importCss } from "./functions.js";
+
+//define suits and values of cards for export
+const board = document.querySelector("rt-board");
+const suits = [ "hearts", "spades",  "diamonds", "clubs"];
+const values = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
+if(board.hasAttribute("ace")){
+  if(board.getAttribute("ace") == "11"){
+    values.push(values.shift());
+  }
+}
+console.log(values);
+
 (function () {
   'use strict'; let create = CARDT => {
     let draw = CE => {
@@ -49,44 +69,111 @@
 }());
 
 class Card extends HTMLElement {
-  constructor(suit, rank) {
+  constructor(suit, rank, back = "red") {
     super();
     suit ? this.suit = suit : this.suit;
     rank ? this.rank = rank.toUpperCase() : this.rank;
+    this.cid = rank ? this.rank + this.suit.charAt(0) : 0;
+    this.back = back;
     this.init = 1;
   }
 
-  connectedCallback() {
-    // super.connectedCallback();
+  toggleSelected(state = !this.hasAttribute("selected")) {
+    return this.view == "front" ?  this.toggleAttribute("selected", state): false ;
+  }
 
-    //import css and create inner html on init
+  get ace(){
+    //looks at board to see if ace is higerst card
+    return board.getAttribute("ace") == "11"? 11 : 1;
+  }
+
+  get selected(){
+    return this.hasAttribute("selected");
+  }
+
+  get color() {
+    if(this.suit == undefined) return false;
+    return this.suit == "diamonds" || this.suit == "hearts" ? "red" : "black";
+  }
+
+  get index() {
+    if (typeof this.rank == "string") this.rank = this.rank.toUpperCase();
+    // if(this.rank == -1 || 13)return this.rank; 
+    return this.rank >= values.length? this.rank : values.indexOf(this.rank);
+    // return values.indexOf(this.rank);
+  }
+
+  get value(){
+    // value of ace now 10 or 1 and higest or lowest rank
+    if(this.ace == 11){
+      return this.index +1 > 10? 10 : this.index + 2;
+    }
+    else{
+      return this.index +1 > 10? 10 : this.index + 1;
+    }
+  }
+
+  get view() {
+    if(this.getElementsByClassName("inner")[0]){
+      return this.getElementsByClassName("inner")[0].classList.contains("flipped") ? "back" : "front";
+    }else{
+      return false;
+    }
+  }
+
+  connectedCallback() {
+    //if rank and suit are made by writing html then this gets the atributes
     if (this.init == 1) {
+      if (this.getAttribute('rank')) {
+        this.rank = this.getAttribute('rank');
+        this.suit = this.getAttribute('suit');
+        this.cid = this.rank + this.suit.charAt(0);
+      }
+      if (!this.getAttribute("cid")) {
+        const cid = document.createAttribute("cid");
+        cid.value = this.cid
+        this.setAttributeNode(cid);
+      } else {
+        this.cid = this.getAttribute("cid");
+        this.splitcid();
+      }
+      // get cardcolor from self or pile if specified
+      switch (true) {
+        case (this.getAttribute("back") != null):
+          this.back = this.getAttribute("back");
+          break;
+        case (this.parentElement.getAttribute("back") != null):
+          this.back = this.parentElement.getAttribute("back");
+          break;
+      }
+
 
       //import css if the .css is not already there
-      var cssId = 'rt-card';  // you could encode the css path itself to generate id..
-      if (!document.getElementById(cssId)) {
-        var head = document.getElementsByTagName('head')[0];
-        var link = document.createElement('link');
-        link.id = cssId;
-        link.rel = 'stylesheet';
-        link.type = 'text/css';
-        link.href = './rt-card.css';
-        link.media = 'all';
-        head.appendChild(link);
-      }
+      importCss('./card.css');
 
       this.draggable = "true";
       this.innerHTML =/*html*/
         `
-          <div class="wrapper">
-            <div class="inner" tabindex="0">
-            <card-t rank="0" class="back" backcolor="red" backtext=""></card-t>
-            <card-t rank="${this.rank}" suit="${this.suit}" class="front"></card-t>
+            <div class="wrapper">
+              <div class="inner" tabindex="0">
+              <card-t rank="0" class="back" backcolor="${this.back}" backtext=""></card-t>
+              <card-t rank="${this.rank}" suit="${this.suit}" cid=${this.cid} class="front"></card-t>
+              </div>
             </div>
-          </div>
-        `;
+          `;
+
       this.init = 0;
     }
+    // if(this.getAttribute("view") == "back" || this.parentElement.getAttribute("show") != this.view) this.flip();
+    switch (this.view) {
+      case "front":
+        if (this.parentElement.getAttribute("show") == "back" || this.getAttribute("view") == "back") this.flip();
+        break;
+      case "back":
+        if (this.parentElement.getAttribute("show") != "back") this.flip();
+        break;
+    }
+
   }
 
   //flips the card
@@ -104,10 +191,33 @@ class Card extends HTMLElement {
     this.id = "";
   }
 
+  cardClick(e) {
+    // looks if thers a parentelement to pass the evt to and standalone cards can flip
+    this.parentElement.nodeName == "CARD-PILE" ? this.parentElement.cardClick(e) : this.flip();
+  }
+
+  splitcid() {
+    this.rank = this.cid[0] == 1 ? 10 : this.cid[0];
+    switch (this.cid[this.cid.length - 1]) {
+      case "h":
+        this.suit = "hearts";
+        break;
+      case "s":
+        this.suit = "spades";
+        break;
+      case "d":
+        this.suit = "diamonds";
+        break;
+      case "c":
+        this.suit = "clubs";
+        break;
+    }
+  }
+
 }
 //define new element 
-customElements.define("rt-card", Card);
-//define suits and values of cards for export
-const suits = ["spades", "clubs", "diamonds", "hearts"];
-const values = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
+customElements.define("play-card", Card);
+
 export { Card, suits, values };
+
+console.log("card.js loaded");

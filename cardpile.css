@@ -1,0 +1,39 @@
+card-pile{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    --deg : 0deg ;
+    min-height: var(--card-height);
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+
+[view = col]{
+    flex-direction: column;
+}
+
+[view = col] play-card{
+    margin: 0 0 var(--card-gap) 0;
+}
+
+[view = row] play-card{
+    margin-inline-end: -8vw;
+}
+
+
+[view = stack]{
+    display: grid;
+}
+
+[view = stack] play-card{
+    grid-area : 1/1;
+}
+
+card-pile play-card{
+    transform: rotateZ(var(--deg));
+}
+
+card-pile play-card:last-child{
+    margin: 0;
+}

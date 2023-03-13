@@ -1,0 +1,38 @@
+rt-board{
+    display: grid;
+    grid-template-columns: repeat(7,1fr);
+    row-gap: 15px;
+    align-items: start;
+}
+
+rt-board fieldset{
+    border-radius: 5px;
+    border-color: #81df1b;
+    border-width: 1px;
+    border-style: solid;
+}
+
+rt-board button{
+    font-size: 12px;
+    border-radius: 1px;
+    border: 1px solid #fff;
+    color: #ffffff;
+    background: #88b127;
+}
+
+.solitairefield {
+    grid-row: 2;
+}
+
+#dragdiv{
+    min-height: 0;
+    border: 0;
+    z-index: 10;
+    position: absolute;
+    pointer-events: none;
+    touch-action: none;
+}
+
+#dragdiv rt-card{
+    pointer-events: none;
+}
