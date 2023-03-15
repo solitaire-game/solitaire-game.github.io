@@ -41,8 +41,20 @@ class Board extends HTMLElement {
         return Array.from(document.querySelectorAll("[selected]"));
     }
 
+    get deck(){
+        return Array.from(document.querySelectorAll(`play-card`));
+    }
+
     clickHandler(e) {
-        typeof e.target.cardClick == "function"? e.target.cardClick(e) : this.clearSelected();
+        if(e.target.selected){
+            //duble klick
+            const suit = e.target.suit;
+            const pile = document.querySelector(`card-pile[suit=${suit}]`);
+            pile.cardClick(e);
+        }
+        else{
+            typeof e.target.cardClick == "function"? e.target.cardClick(e) : this.clearSelected();
+        }
     }
     dragStartHandler(e) {
         const dt = e.dataTransfer
@@ -154,48 +166,27 @@ class Board extends HTMLElement {
         const backCards = this.getElementsByClassName("flipped") ;
         const check = backCards.length == 0? true : false;
         if(check){
-            // this.completeWin();
+            this.completeWin();
             console.log("player wins");
             window.alert("u heeft gewonen");
         }
         return check;
     }
     
-    //! old board function need checkup
     completeWin(){
-        const heartsPile = document.querySelector("card-pile[suit=hearts]");
-        const spadesPile = document.querySelector("card-pile[suit=spades]");
-        const clubsPile = document.querySelector("card-pile[suit=clubs]");
-        const diamondsPile = document.querySelector("card-pile[suit=diamonds]");
-        const cards = Array.from(document.getElementsByTagName("play-card"));
-        cards.sort((a,b) =>{ 
+        const cards = this.deck.sort((a,b) =>{ 
             return a.index - b.index;
         });
         for(const card of cards){
-            if(card.parentElement.getAttribute("click") == "select" || "select_place"){
-                switch(card.suit){
-                    case "hearts":
-                        card.toggleSelected(true);
-                        heartsPile.cardClick();
-                    break;
-                    case "spades":
-                        card.toggleSelected(true);
-                        spadesPile.cardClick();
-                    break;
-                    case "clubs":
-                        card.toggleSelected(true);
-                        clubsPile.cardClick();
-                    break;
-                    case "diamonds":
-                        card.toggleSelected(true);
-                        diamondsPile.cardClick();
-                    break;
-                }
+            if(!card.parentElement.hasAttribute("suit")){
+                const pile = document.querySelector(`card-pile[suit=${card.suit}]`);
+                card.toggleSelected(true);
+                pile.rules? pile.append(card) : false ;
+                this.clearSelected();
             }
         }
     }
 
-    //! end old
     clearSelected() {
         const dragdiv = document.getElementById("dragdiv");
         if(dragdiv){

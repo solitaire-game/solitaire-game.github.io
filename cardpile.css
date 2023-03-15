@@ -17,6 +17,25 @@ card-pile{
     margin: 0 0 var(--card-gap) 0;
 }
 
+[view = col]:empty:before{
+    content : '👑' ;
+}
+
+#drawpile:empty:after{
+    content : '🔄';
+}
+
+#dragdiv:empty:before{
+    content : none ;
+}
+
+card-pile[view=col] play-card:last-child{
+    margin-block-end: var(--card-height);
+}
+
+#dragdiv[view=col] play-card:last-child{
+    margin-block-end: 0;
+}
 [view = row] play-card{
     margin-inline-end: -8vw;
 }
