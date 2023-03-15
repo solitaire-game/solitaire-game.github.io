@@ -5,11 +5,29 @@ rt-board{
     align-items: start;
 }
 
+#placepile{
+    justify-self: start;
+}
+
+#placepile play-card{
+    margin-inline-start : calc(var(--card-with) * -1) ;
+}
+
+rt-board #placepile play-card:first-child{
+    margin-inline-start : 0 ;
+}
+
+#placepile play-card:nth-last-child(2),#placepile play-card:last-child{
+    margin-inline-start : calc(var(--card-with) * -1 * 0.88) ;
+}
+
 rt-board fieldset{
     border-radius: 5px;
     border-color: #81df1b;
     border-width: 1px;
     border-style: solid;
+    width: calc(var(--card-with) * 0.5);
+    justify-self: end;
 }
 
 rt-board button{

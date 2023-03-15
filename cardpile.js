@@ -239,17 +239,22 @@ class Pile extends HTMLElement {
                             card = card.nextElementSibling;
                             card.toggleSelected(true);
                         }
-                        break;
+                    break;
                     case "above":
                         card.toggleSelected(true);
                         while (card.previousElementSibling) {
                             card = card.previousElementSibling;
                             card.toggleSelected(true);
                         }
-                        break;
+                    break;
                     case "choice":
                         card.toggleSelected();
-                        break;
+                    break;
+                    case "last":
+                        this.lastElementChild.selected? this.lastElementChild.toggleSelected(false) : this.lastElementChild.toggleSelected(true) ;
+                        
+                    break;
+
                 }
             }
             else if (!card.selected) {
