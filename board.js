@@ -123,6 +123,25 @@ class Board extends HTMLElement {
         }
     }
 
+    clearSelected() {
+        const dragdiv = document.getElementById("dragdiv");
+        if(dragdiv){
+            if (dragdiv.childElementCount > 0) {
+                // put cards back to oldparent
+                this.oldParent.placecard();
+                this.oldParent = false;
+            }
+        }
+        for (const card of this.selectedCards) {
+            card.toggleSelected(false);
+            this.checkWin();
+        }
+    }
+
+/*******************************************************************************************************************************************************************************
+ *                                                  solitaire board functionalety
+ ******************************************************************************************************************************************************************************/
+
     showRules(){
         const rules = `De kaartreeksen op de speelstapels dienen daar aflopend worden geplaatst. De kaartkleuren dienen om-en-om (rood en zwart) gebruikt worden. U kunt hele reeksen of delen daarvan verplaatsen als de eerste kaart op een andere stapel past.
 
@@ -130,15 +149,19 @@ class Board extends HTMLElement {
         window.alert(rules);
     }
 
+    showOptions(){
+
+    }
+
     undoMove(){
         const undoMsgField = document.getElementById("undoinfo");
         undoMsgField.innerText = "";
         if(this.moves.length > 0){
             const lastmove = this.moves.pop();
-            const[to,from,cards,flip] = lastmove;
+            const[to,from,cards,type] = lastmove;
 
             //undomove
-            switch(flip){
+            switch(type){
                 case 2:
                     // undo drawcard
                     to.prepend(...cards)
@@ -148,7 +171,7 @@ class Board extends HTMLElement {
                     to.append(...cards);
                 break;
                 default:
-                    if(flip)to.lastElementChild.flip();
+                    if(type)to.lastElementChild.flip();
                     to.append(...cards);
                 break;
             }
@@ -187,22 +210,10 @@ class Board extends HTMLElement {
         }
     }
 
-    clearSelected() {
-        const dragdiv = document.getElementById("dragdiv");
-        if(dragdiv){
-            if (dragdiv.childElementCount > 0) {
-                // put cards back to oldparent
-                this.oldParent.placecard();
-                this.oldParent = false;
-            }
-        }
-        for (const card of this.selectedCards) {
-            card.toggleSelected(false);
-        }
-    }
+/*******************************************************************************************************************************************************************************
+ *                                                end  solitaire board functionalety
+ ******************************************************************************************************************************************************************************/
 
-
-} 
-customElements.define("rt-board", Board);
+}customElements.define("rt-board", Board);
 export { Board };
 console.log("board.js loaded");

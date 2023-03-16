@@ -41,7 +41,7 @@ class Pile extends HTMLElement {
                     switch (true) {
                         case (+rule == rule):
                             const deck = document.querySelector("[deck]");
-                            deck.drawcard(this, "bottom", rule);
+                            deck.drawcard(this, rule);
                             break;
                         case (rule == "showLast" || rule == "showlast"):
                             this.flip(rule);
@@ -196,7 +196,10 @@ class Pile extends HTMLElement {
         switch (action) {
             case "draw":
                 this.board.clearSelected();
-                this.cards.length != 0 ? this.drawcard(to) : emptypile.drawcard(this, "bottom", "all");
+                //solitaire 
+                //todo see option to draw 1 || 3 
+                const amount = this.board.optionDraw == 1? 1 : 3;
+                this.cards.length != 0 ? this.drawcard(to) : emptypile.drawcard(this, "all");
                 break;
             case "select":
                 // if thers already a selected card see if its from a difrent pile if zo unselect cards
@@ -331,7 +334,7 @@ class Pile extends HTMLElement {
     }
 
     // get cards from this pale and place to another
-    drawcard(to, where = "bottom", amount = 1) {
+    drawcard(to, amount = 1,where = "bottom") {
         //multiple cards only work at top and bottom where
         const deck = this.getElementsByTagName('play-card');
         const length = deck.length;
@@ -351,7 +354,7 @@ class Pile extends HTMLElement {
                 break;
             case (where == "bottom"):
                 for (let i = 0; i < amount; i++) {
-                    cards.push(deck[i]);
+                    if(deck[i])cards.push(deck[i]);
                 }
                 break;
             case (where > 0):

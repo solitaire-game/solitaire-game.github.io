@@ -7,6 +7,7 @@ rt-board{
 
 #placepile{
     justify-self: start;
+    grid-column: span 2;
 }
 
 #placepile play-card{
@@ -18,24 +19,7 @@ rt-board #placepile play-card:first-child{
 }
 
 #placepile play-card:nth-last-child(2),#placepile play-card:last-child{
-    margin-inline-start : calc(var(--card-with) * -1 * 0.88) ;
-}
-
-rt-board fieldset{
-    border-radius: 5px;
-    border-color: #81df1b;
-    border-width: 1px;
-    border-style: solid;
-    width: calc(var(--card-with) * 0.5);
-    justify-self: end;
-}
-
-rt-board button{
-    font-size: 12px;
-    border-radius: 1px;
-    border: 1px solid #fff;
-    color: #ffffff;
-    background: #88b127;
+    margin-inline-start : calc(var(--card-with) * -1 * 0.8) ;
 }
 
 .solitairefield {
