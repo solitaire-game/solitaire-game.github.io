@@ -304,6 +304,8 @@ class Pile extends HTMLElement {
                 flip = 1;
             } 
         }
+        //solitaire
+        this.board.checkWin();
         //sort cards in order if it has atribute sort
         if (this.hasAttribute("sort")) this.sortCards(this.getAttribute("sort"));
         this.board.record(oldParent,this,cards,flip)
@@ -442,18 +444,28 @@ class Pile extends HTMLElement {
         this.style.setProperty("--deg", deg + "deg");
     }
     flip(special = "") {
-        const cards = this.getElementsByTagName("play-card");
+        const cards = this.cards;
         switch (special) {
             case "showLast":
                 for (const card of cards) card.flip();
                 cards[cards.length - 1].flip();
-                break;
+            break;
             case "flipLast":
                 cards[cards.length - 1].flip();
-                break;
+            break;
+            case "front":
+                for(const card of cards){
+                    if(card.view == "back")card.flip();
+                }
+            break;
+            case "back":
+                for(const card of cards){
+                    if(card.view == "front")card.flip();
+                }
+            break;
             default:
                 for (const card of cards) card.flip();
-                break;
+            break;
         }
     }
 

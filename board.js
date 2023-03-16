@@ -134,7 +134,6 @@ class Board extends HTMLElement {
         }
         for (const card of this.selectedCards) {
             card.toggleSelected(false);
-            this.checkWin();
         }
     }
 
