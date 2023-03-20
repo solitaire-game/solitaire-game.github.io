@@ -1,5 +1,6 @@
 import { importCss } from "./functions.js";
 import '../cardpile.js';
+import './option-menu/optionsmenu.js';
 
 class Board extends HTMLElement {
     constructor() {
@@ -12,6 +13,9 @@ class Board extends HTMLElement {
         if (this.init == 1) {
             //import css 
             importCss('./board.css');
+
+            //get localstorage for options if no storage set defoult options
+            if(!this.options)this.setDefaultOptions();
 
             //add eventlistners
             this.addEventListener("click", (evt) => this.clickHandler(evt));
@@ -43,6 +47,23 @@ class Board extends HTMLElement {
 
     get deck(){
         return Array.from(document.querySelectorAll(`play-card`));
+    }
+
+    get options(){
+        return JSON.parse(localStorage.getItem("solitare-options"));
+    }
+
+    get defaultOptions(){
+        //todo make json
+        return [`draw:1`,`testrule:'draw'`];
+    }
+
+    setOptions(option){
+        //get storagestring look for the option and replace?
+    }
+
+    setDefaultOptions(){
+        localStorage.setItem("solitare-options", JSON.stringify(this.defaultOptions));
     }
 
     clickHandler(e) {

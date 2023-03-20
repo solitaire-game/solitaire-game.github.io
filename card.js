@@ -33,7 +33,6 @@ if(board.hasAttribute("ace")){
     values.push(values.shift());
   }
 }
-console.log(values);
 
 (function () {
   'use strict'; let create = CARDT => {

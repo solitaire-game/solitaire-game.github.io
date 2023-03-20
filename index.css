@@ -9,13 +9,20 @@ span{
     justify-content: center;
 }
 
+span *{
+    margin-inline: 3px;
+}
+
 fieldset{
     border-radius: 5px;
+    display: flex;
+    margin-block-start: calc(var(--card-height) /2);
     border-color: #81df1b;
     border-width: 1px;
     border-style: solid;
-    /* width: calc(var(--card-with) * 0.5);
-    justify-self: end; */
+    flex-direction: column;
+    align-items: center;
+    grid-row: span 2;
 }
 
 button{
@@ -33,8 +40,3 @@ button:hover{
 button:active{
     background-color: #6b940c;
 }  
-
-#optionsMenu{
-    background-color: black;
-    display: grid;
-}

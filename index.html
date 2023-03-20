@@ -5,16 +5,7 @@
     </head>
     <body>
         <div style="max-width: 980px ; margin-inline: auto;">
-            <span>
-                <h1>solitare game from <a href="https://roads-technology.nl/" target="_blank"><img src="https://roads-technology.nl/wp-content/uploads/2019/07/logo.png" height="40px"></a></h1>
-                <fieldset>
-                    <legend>options</legend>
-                    <button onclick="document.querySelector('rt-board').undoMove()"><p>🔄</P></button>
-                    <button onclick="document.querySelector('rt-board').showRules()"><p>ℹ️</P></button>
-                    <button onclick="document.querySelector('rt-board').showOptions()"><p>⚙️</P></button>
-                    <span id="undoinfo"></span>
-                </fieldset>
-            </span>
+
             <rt-board drag="true">
                 <card-pile id="drawpile" deck="shuffle" view="stack" show="back" click="draw,placepile,placepile"></card-pile>
                 <card-pile id="placepile" selectRules="last" click="select" ></card-pile>
@@ -29,18 +20,28 @@
                 <card-pile class ="solitairefield" view="col"  acceptRules="otherColor,lower,multiple" selectRules="below" startrules="5,showLast" click="select_place"></card-pile>
                 <card-pile class ="solitairefield" view="col"  acceptRules="otherColor,lower,multiple" selectRules="below" startrules="6,showLast" click="select_place"></card-pile>
                 <card-pile class ="solitairefield" view="col"  acceptRules="otherColor,lower,multiple" selectRules="below" startrules="7,showLast" click="select_place"></card-pile>
+                <fieldset>
+                    <legend>options</legend>
+                    <button onclick="document.querySelector('rt-board').undoMove()"><p>🔄</P></button>
+                    <button onclick="document.querySelector('rt-board').showRules()"><p>ℹ️</P></button>
+                    <button onclick="document.querySelector('rt-board').showOptions()"><p>⚙️</P></button>
+                    <span id="undoinfo"></span>
+                </fieldset>
             </rt-board>
+            <span>
+                <h1>solitare game from </h1>
+                <a href="https://roads-technology.nl/" target="_blank">
+                    <img src="https://roads-technology.nl/wp-content/uploads/2019/07/logo.png" height="40px">
+                </a>
+                <a href="https://github.com/solitaire-game/solitaire-game.github.io" target="_blank">
+                    Github
+                </a>
+            </span>
+            <options-menu board="rt-board">
+                <option-radio draw="1,3"></option-radio>
+                <option-radio testoption="string,klaas,donkey"></option-radio>
+            </options-menu>
         </div>
-            <!-- <form id="optionsMenu">
-                <span>
-                    <p>draw</p>
-                    <input type="radio" id="draw1" name="draw" value="1" checked><label for="draw1">1</label>
-                    <input type="radio" id="draw3" name="draw" value="3"><label for="draw1">3</label>
-                </span>
-                <span>
-                    <input type="submit" value="submit">
-                </span>
-            </form> -->
         <script type ="module" src="index.js"></script>
     </body>
 </html>
