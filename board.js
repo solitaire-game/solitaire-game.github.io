@@ -32,9 +32,9 @@ class Board extends HTMLElement {
                     this.addEventListener("dragstart", (evt) => this.dragStartHandler(evt));
                     document.addEventListener("dragover", (evt) => this.onMouseMove(evt));
                     this.addEventListener("dragend", (evt) => this.dragEndHandler(evt));
-                    // this.addEventListener("touchstart", (evt) => this.dragstartHandler(evt));
-                    // document.addEventListener("touchmove", (evt) => this.onMouseMove(evt));
-                    // this.addEventListener("touchend", (evt) => this.touchEndHandler(evt));
+                    this.addEventListener("touchstart", (evt) => this.dragStartHandler(evt));
+                    document.addEventListener("touchmove", (evt) => this.onMouseMove(evt));
+                    this.addEventListener("touchend", (evt) => this.touchEndHandler(evt));
                 }
             }
             this.init = 0;
@@ -67,20 +67,27 @@ class Board extends HTMLElement {
     }
 
     clickHandler(e) {
-        if(e.target.selected){
-            //duble klick
-            const suit = e.target.suit;
-            const pile = document.querySelector(`card-pile[suit=${suit}]`);
-            pile.cardClick(e);
-        }
-        else{
-            typeof e.target.cardClick == "function"? e.target.cardClick(e) : this.clearSelected();
+        console.log("klick", e);
+        // if(e.type == "touc")
+        if(e.pointerId == 1){
+            if(e.target.selected){
+                //duble klick
+                const suit = e.target.suit;
+                const pile = document.querySelector(`card-pile[suit=${suit}]`);
+                pile.cardClick(e);
+            }
+            else{
+                typeof e.target.cardClick == "function"? e.target.cardClick(e) : this.clearSelected();
+            }
         }
     }
     dragStartHandler(e) {
         const dt = e.dataTransfer
         const card = e.target;
         this.oldParent = card.parentElement;
+        // prefent contextmenu for touch event 
+        if(e.type == "touchstart")e.preventDefault();
+
         //check if the draged element is a card thats dragable
         if (card.draggable && card.nodeName == "PLAY-CARD") {
             

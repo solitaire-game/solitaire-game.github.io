@@ -3,10 +3,18 @@ body{
     color: white;
 }
 
+#steve{
+    max-width: 980px;
+    margin-inline: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
 span{
     display: flex;
     align-items: center;
     justify-content: center;
+    grid-column: span 2;
 }
 
 span *{
@@ -18,11 +26,12 @@ fieldset{
     display: flex;
     margin-block-start: calc(var(--card-height) /2);
     border-color: #81df1b;
-    border-width: 1px;
+    border-width: 0px;
     border-style: solid;
     flex-direction: column;
     align-items: center;
     grid-row: span 2;
+    text-align: center;
 }
 
 button{

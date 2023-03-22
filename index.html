@@ -4,7 +4,7 @@
         <link rel="stylesheet" href="index.css">
     </head>
     <body>
-        <div style="max-width: 980px ; margin-inline: auto;">
+        <div id="steve">
 
             <rt-board drag="true">
                 <card-pile id="drawpile" deck="shuffle" view="stack" show="back" click="draw,placepile,placepile"></card-pile>
@@ -20,14 +20,15 @@
                 <card-pile class ="solitairefield" view="col"  acceptRules="otherColor,lower,multiple" selectRules="below" startrules="5,showLast" click="select_place"></card-pile>
                 <card-pile class ="solitairefield" view="col"  acceptRules="otherColor,lower,multiple" selectRules="below" startrules="6,showLast" click="select_place"></card-pile>
                 <card-pile class ="solitairefield" view="col"  acceptRules="otherColor,lower,multiple" selectRules="below" startrules="7,showLast" click="select_place"></card-pile>
-                <fieldset>
-                    <legend>options</legend>
-                    <button onclick="document.querySelector('rt-board').undoMove()"><p>🔄</P></button>
-                    <button onclick="document.querySelector('rt-board').showRules()"><p>ℹ️</P></button>
-                    <button onclick="document.querySelector('rt-board').showOptions()"><p>⚙️</P></button>
-                    <span id="undoinfo"></span>
-                </fieldset>
+
             </rt-board>
+            <fieldset>
+                <legend>options</legend>
+                <button onclick="document.querySelector('rt-board').undoMove()"><p>🔄</P></button>
+                <button onclick="document.querySelector('rt-board').showRules()"><p>ℹ️</P></button>
+                <button onclick="document.querySelector('rt-board').showOptions()"><p>⚙️</P></button>
+                <span id="undoinfo"></span>
+            </fieldset>
             <span>
                 <h1>solitare game from </h1>
                 <a href="https://roads-technology.nl/" target="_blank">

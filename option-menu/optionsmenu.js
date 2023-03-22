@@ -1,3 +1,5 @@
+import "./optionField.js";
+
 customElements.define("options-menu", class OptionsMenu extends HTMLElement {
     constructor(){
         super();
@@ -15,3 +17,5 @@ customElements.define("options-menu", class OptionsMenu extends HTMLElement {
         });
     }
 });
+
+console.log("optionmenu loaded");
