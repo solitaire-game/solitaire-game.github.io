@@ -71,8 +71,6 @@ class Board extends HTMLElement {
     }
 
     clickHandler(e) {
-        console.log("klick", e);
-        // if(e.type == "touc")
         if(e.pointerId == 1){
             if(e.target.selected){
                 //duble klick
@@ -148,7 +146,6 @@ class Board extends HTMLElement {
         let endElement = document.elementFromPoint(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
         if (endElement.nodeName == "PLAY-CARD") endElement = endElement.parentElement;
         if (endElement.nodeName == "CARD-PILE" && !this.dragPile.hasChildNodes() ) {
-            console.log("touchend");
             endElement.cardClick(e);
         } else {
             this.clearSelected();
@@ -221,13 +218,13 @@ class Board extends HTMLElement {
         const check = backCards.length == 0? true : false;
         if(check){
             this.completeWin();
-            console.log("player wins");
             window.alert("u heeft gewonen");
         }
         return check;
     }
     
     completeWin(){
+        this.clearSelected();
         const cards = this.deck.sort((a,b) =>{ 
             return a.index - b.index;
         });
@@ -235,7 +232,7 @@ class Board extends HTMLElement {
             if(!card.parentElement.hasAttribute("suit")){
                 const pile = document.querySelector(`card-pile[suit=${card.suit}]`);
                 card.toggleSelected(true);
-                pile.rules? pile.append(card) : false ;
+                pile.rules? pile.append(card) : console.error(`card = ${card} the pile its trying = ${pile}`) ;
                 this.clearSelected();
             }
         }

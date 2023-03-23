@@ -1,5 +1,7 @@
 doel is solitaire/patience te maaken met onderdelen die ook voor andere kaartspellen gebruikt kunnen worden
+
+bugs:
+    soms doet completewin niet goed 1 van de suits
+
 functon to add:
     stappenteller om alle beweging op te slaan/score te bepaalen
-    redo move
-    victory condition

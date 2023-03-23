@@ -2,6 +2,7 @@
   --card-with: 7em;
   --card-height: calc(var(--card-with) / 18 * 25);
   --card-gap : calc(var(--card-height) * 0.8 * -1) ;
+  --card-gap2 : calc(var(--card-height) * 0.9 * -1) ;
  }
  
  play-card{

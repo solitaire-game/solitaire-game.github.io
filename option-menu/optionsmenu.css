@@ -1,0 +1,10 @@
+options-menu{
+    background-color: hotpink;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+option-radio{
+    background-color: black;
+}

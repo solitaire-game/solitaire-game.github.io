@@ -18,6 +18,10 @@ card-pile{
     margin: 0 0 var(--card-gap) 0;
 }
 
+[view = col] [draggable=false]{
+    margin: 0 0 var(--card-gap2) 0;
+}
+
 [view = col]:empty:before{
     content : '👑' ;
 }
