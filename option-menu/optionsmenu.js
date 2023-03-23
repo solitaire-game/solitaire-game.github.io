@@ -1,4 +1,5 @@
 import "./optionField.js";
+import { importCss } from "../functions.js";
 
 customElements.define("options-menu", class OptionsMenu extends HTMLElement {
     constructor(){
@@ -6,15 +7,9 @@ customElements.define("options-menu", class OptionsMenu extends HTMLElement {
     }
 
     connectedCallback(){
-        Array.from(this.attributes).map(attr => {
-            if(attr == 'board'){
-                //hookup to board
-            }
-            else{
-                //read name and value make options of this
-                
-            }
-        });
+        //import css
+        importCss('./option-menu/optionsmenu.css');
+        
     }
 });
 

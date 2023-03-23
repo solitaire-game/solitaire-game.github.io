@@ -49,6 +49,10 @@ class Board extends HTMLElement {
         return Array.from(document.querySelectorAll(`play-card`));
     }
 
+    get dragPile(){
+        return this.querySelector(`#dragdiv`);
+    }
+
     get options(){
         return JSON.parse(localStorage.getItem("solitare-options"));
     }
@@ -143,7 +147,7 @@ class Board extends HTMLElement {
     touchEndHandler(e) {
         let endElement = document.elementFromPoint(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
         if (endElement.nodeName == "PLAY-CARD") endElement = endElement.parentElement;
-        if (endElement.nodeName == "CARD-PILE") {
+        if (endElement.nodeName == "CARD-PILE" && !this.dragPile.hasChildNodes() ) {
             console.log("touchend");
             endElement.cardClick(e);
         } else {

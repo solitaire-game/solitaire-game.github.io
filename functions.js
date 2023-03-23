@@ -1,5 +1,6 @@
 console.log("functions.js loaded");
 
+//path relative from the html its being run
 function importCss(path){
 
 let name = path.split('/');

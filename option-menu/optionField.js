@@ -36,15 +36,18 @@ customElements.define("option-radio", class OptionsRadio extends OptionField {
     }
 
     constructRadioButton(attr){
-        const name= attr;
         attr.value.split(",").map(value =>{
             const input = document.createElement("input")
-            input.id = name+value;
+            input.id = attr.name+value;
             input.type = "radio";
-            input.name = name;
+            input.name = attr.name;
             input.value = value;
+            this.append(input);
+            const label = document.createElement('label');
+            label.htmlFor = attr.name+value;
+            label.textContent = value;
+            this.append(label);
         });
-        console.log(name , values);
     }
 });
 

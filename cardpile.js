@@ -71,8 +71,8 @@ class Pile extends HTMLElement {
                 this.getAttribute("acceptRules").includes("multiple") ? "" : this.setAttribute("acceptRules", this.getAttribute("acceptRules").concat(",single"));
             }
             if (this.board.hasAttribute("drag")) {
-                //if we want dragin add the eventlistners
-                if (this.board.getAttribute("drag") == "true") {
+                //if we want dragin add the eventlistners and stops the drag on draw piles (so we dont draw and return the card at same time)
+                if (this.board.getAttribute("drag") == "true" && !this.getAttribute('click').startsWith("draw") ) {
                     this.addEventListener("dragover", (evt) => this.dragoverHandler(evt));
                     this.addEventListener("drop", (evt) => this.cardClick(evt))
                 }

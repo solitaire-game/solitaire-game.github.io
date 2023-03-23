@@ -4,6 +4,7 @@ card-pile{
     justify-content: center;
     --deg : 0deg ;
     min-height: var(--card-height);
+    min-width: var(--card-with);
     background-repeat: no-repeat;
     background-position: center;
 }
