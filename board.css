@@ -4,6 +4,7 @@ rt-board{
     row-gap: 15px;
     column-gap: 5px;
     align-items: start;
+    user-select: none;
 }
 
 #placepile{

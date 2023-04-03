@@ -26,11 +26,11 @@
                 <legend>options</legend>
                 <button onclick="document.querySelector('rt-board').undoMove()"><p>🔄</P></button>
                 <button onclick="document.querySelector('rt-board').showRules()"><p>ℹ️</P></button>
-                <button onclick="document.querySelector('rt-board').showOptions()"><p>⚙️</P></button>
+                <button onclick="document.querySelector('options-menu').toggleAttribute('visible')"><p>⚙️</P></button>
                 <span id="undoinfo"></span>
             </fieldset>
             <span>
-                <h1>solitare game from </h1>
+                <h1>solitaire game from </h1>
                 <a href="https://roads-technology.nl/" target="_blank">
                     <img src="https://roads-technology.nl/wp-content/uploads/2019/07/logo.png" height="40px">
                 </a>
@@ -39,10 +39,10 @@
                 </a>
             </span>
         </div>
-        <!-- <options-menu board="rt-board">
+        <options-menu board="rt-board">
             <option-radio draw="1,3"></option-radio>
-            <option-radio testoption="string,klaas,donkey"></option-radio>
-        </options-menu> -->
+            <!-- <option-radio testoption="string,klaas,donkey"></option-radio> -->
+        </options-menu>
         <script type ="module" src="index.js"></script>
     </body>
 </html>

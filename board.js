@@ -1,6 +1,5 @@
 import { importCss } from "./functions.js";
 import '../cardpile.js';
-import './option-menu/optionsmenu.js';
 
 class Board extends HTMLElement {
     constructor() {
@@ -53,22 +52,29 @@ class Board extends HTMLElement {
         return this.querySelector(`#dragdiv`);
     }
 
+    
+/*
+                           localstorage options
+*/
     get options(){
-        return JSON.parse(localStorage.getItem("solitare-options"));
+        return JSON.parse(localStorage.getItem(this.nodeName.toLowerCase()));
+    }
+
+    get optionDraw(){
+        return +this.options[0].split("=")[1];
     }
 
     get defaultOptions(){
-        //todo make json
-        return [`draw:1`,`testrule:'draw'`];
-    }
-
-    setOptions(option){
-        //get storagestring look for the option and replace?
+        return [`draw=1`,`testoption=klaas`];
     }
 
     setDefaultOptions(){
-        localStorage.setItem("solitare-options", JSON.stringify(this.defaultOptions));
+        localStorage.setItem("rt-board", JSON.stringify(this.defaultOptions));
     }
+
+/*
+                            end localstorage options
+*/
 
     clickHandler(e) {
         if(e.pointerId == 1){
@@ -145,7 +151,7 @@ class Board extends HTMLElement {
     touchEndHandler(e) {
         let endElement = document.elementFromPoint(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
         if (endElement.nodeName == "PLAY-CARD") endElement = endElement.parentElement;
-        if (endElement.nodeName == "CARD-PILE" && !this.dragPile.hasChildNodes() ) {
+        if (endElement.nodeName == "CARD-PILE") {
             endElement.cardClick(e);
         } else {
             this.clearSelected();
@@ -214,9 +220,14 @@ class Board extends HTMLElement {
     }
     
     checkWin(){
-        const backCards = this.getElementsByClassName("flipped") ;
+        const backCards = this.querySelectorAll(`.solitairefield .flipped`);
+        const drawpile = document.getElementById("drawpile");
+        const placepile = document.getElementById('placepile');
         const check = backCards.length == 0? true : false;
-        if(check){
+        //check carddrawamount 
+        const drawcheck = (this.optionDraw ==3 && drawpile.cardCount == 0 && placepile.cardCount <= 1)||(this.optionDraw == 1)? true : false;
+
+        if(check && drawcheck){
             this.completeWin();
             window.alert("u heeft gewonen");
         }

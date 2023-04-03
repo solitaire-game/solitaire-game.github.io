@@ -12,6 +12,33 @@ class OptionField extends HTMLElement{
         //get localstorage see wat value the given option is there;
     }
 
+    closestElement(selector, el = this) {
+        return (
+            (el && el != document && el != window && el.closest(selector)) ||
+            this.closestElement(selector, el.getRootNode().host)
+        );
+    }
+    get menu() {
+        return this.closestElement("options-menu");
+    }
+
+    get storageData(){
+        //get local storage if first time not set yet get defoult from board
+        return localStorage.getItem(this.boardID)? JSON.parse(localStorage.getItem(this.boardID)) : this.board.defaultOptions ;
+    }
+
+    get boardID(){
+        return this.menu.getAttribute('board');
+    }
+
+    get board(){
+        return document.querySelector(this.boardID);
+    }
+
+    inStorage(value){
+        return this.storageData.includes(value);
+    }
+
 }
 
 /*
@@ -31,8 +58,23 @@ customElements.define("option-radio", class OptionsRadio extends OptionField {
     connectedCallback(){
         super.connectedCallback();
         Array.from(this.attributes).map(attr => {
+            const legend = document.createElement('legend');
+            legend.textContent = attr.name;
+            this.append(legend);
             this.constructRadioButton(attr);
         });
+
+    }
+
+    get name(){
+        return this.querySelector(`legend`).innerText;
+    }
+    get value(){
+        return this.querySelector('input:checked').value;
+    }
+
+    get option(){
+        return this.name +'=' + this.value;
     }
 
     constructRadioButton(attr){
@@ -41,6 +83,7 @@ customElements.define("option-radio", class OptionsRadio extends OptionField {
             input.id = attr.name+value;
             input.type = "radio";
             input.name = attr.name;
+            input.checked = this.inStorage(attr.name+'='+value)? true : false;
             input.value = value;
             this.append(input);
             const label = document.createElement('label');
@@ -49,6 +92,34 @@ customElements.define("option-radio", class OptionsRadio extends OptionField {
             this.append(label);
         });
     }
+});
+
+console.log("optionfield loaded");
+
+customElements.define("option-button", class OptionsButton extends OptionField {
+    constructor(){
+        super();
+    }
+
+    connectedCallback(){
+        console.warn("connected",this.nodeName);
+        super.connectedCallback();
+        setTimeout(() => {
+            this.constructButton();
+            console.warn("parsed",this.nodeName)            
+        });
+
+    }
+
+    constructButton(){
+        const input = document.createElement('input');
+        input.type = "button";
+        console.log(this.menu)
+        input.onclick = (e =>{this.menu.klaas()});
+        input.value = 'submit';
+        this.append(input);
+    }
+
 });
 
 console.log("optionfield loaded");

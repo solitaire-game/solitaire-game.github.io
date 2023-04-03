@@ -73,7 +73,7 @@ class Pile extends HTMLElement {
             if (this.board.hasAttribute("drag")) {
                 //if we want dragin add the eventlistners and stops the drag on draw piles (so we dont draw and return the card at same time) 
                 //! getatribute('click') makes eror if no click need to solve ?
-                if (this.board.getAttribute("drag") == "true" && !this.getAttribute('click').startsWith("draw") ) {
+                if (this.board.getAttribute("drag") == "true" && !this.getAttribute('click')?.startsWith("draw") ) {
                     this.addEventListener("dragover", (evt) => this.dragoverHandler(evt));
                     this.addEventListener("drop", (evt) => this.cardClick(evt))
                 }
@@ -197,10 +197,8 @@ class Pile extends HTMLElement {
         switch (action) {
             case "draw":
                 this.board.clearSelected();
-                //solitaire 
-                //todo see option to draw 1 || 3 
-                const amount = this.board.optionDraw == 1? 1 : 3;
-                this.cards.length != 0 ? this.drawcard(to) : emptypile.drawcard(this, "all");
+                //solitaire this.board.optionDraw
+                this.cards.length != 0 ? this.drawcard(to,this.board.optionDraw) : emptypile.drawcard(this, "all");
                 break;
             case "select":
                 // if thers already a selected card see if its from a difrent pile if zo unselect cards
