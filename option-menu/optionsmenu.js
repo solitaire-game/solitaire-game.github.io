@@ -7,14 +7,10 @@ customElements.define("options-menu", class OptionsMenu extends HTMLElement {
     }
 
     connectedCallback(){
-        console.warn("connected",this.nodeName);
         //import css
-        importCss('./option-menu/optionsmenu.css');
+        importCss('optionsmenu.css');
         this.makeButton();
         this.onclick = (e => {this.toggleDisplay(e.target)})
-        setTimeout(() => {
-            console.warn("parsed",this.nodeName)            
-        });
     }
 
     get getoptions(){
@@ -47,13 +43,11 @@ customElements.define("options-menu", class OptionsMenu extends HTMLElement {
     
     makeButton(){
         //buton with onlick change to option-button thingy
-        // const button = /*html*/`<button onclick="document.querySelector('options-menu').klaas()">confirm</button>`;
         const button = document.createElement('option-button');
-        console.log(button);
         this.append(button);
     }
 
-    klaas(){
+    buttonHandler(){
         //get the values and set it in the local storage
        this.setOptions();
        this.toggleAttribute('visible');

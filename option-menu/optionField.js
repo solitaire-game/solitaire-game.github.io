@@ -39,6 +39,12 @@ class OptionField extends HTMLElement{
         return this.storageData.includes(value);
     }
 
+    get optionAttr(){
+        return Array.from(this.attributes).map(attr =>{
+            if(!(attr.name == 'id' || attr.name == 'class')) return attr;
+        }).filter(n => n)[0];
+    }
+
 }
 
 /*
@@ -57,12 +63,10 @@ customElements.define("option-radio", class OptionsRadio extends OptionField {
 
     connectedCallback(){
         super.connectedCallback();
-        Array.from(this.attributes).map(attr => {
             const legend = document.createElement('legend');
-            legend.textContent = attr.name;
+            legend.textContent = this.optionAttr.name;
             this.append(legend);
-            this.constructRadioButton(attr);
-        });
+            this.constructRadioButton(this.optionAttr);
 
     }
 
@@ -93,29 +97,20 @@ customElements.define("option-radio", class OptionsRadio extends OptionField {
         });
     }
 });
-
-console.log("optionfield loaded");
-
 customElements.define("option-button", class OptionsButton extends OptionField {
     constructor(){
         super();
     }
 
     connectedCallback(){
-        console.warn("connected",this.nodeName);
         super.connectedCallback();
-        setTimeout(() => {
-            this.constructButton();
-            console.warn("parsed",this.nodeName)            
-        });
-
+        this.constructButton();
     }
 
     constructButton(){
         const input = document.createElement('input');
         input.type = "button";
-        console.log(this.menu)
-        input.onclick = (e =>{this.menu.klaas()});
+        input.onclick = (e =>{this.menu.buttonHandler()});
         input.value = 'submit';
         this.append(input);
     }

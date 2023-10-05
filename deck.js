@@ -29,7 +29,7 @@ class Deck {
 
     find(cid){
         for(const card of this.cards){
-            if(card.cid == cid)return card;
+            if(card.cid.toLowerCase() == cid.toLowerCase())return card;
         }
     }
 }

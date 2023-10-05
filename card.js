@@ -72,7 +72,7 @@ class Card extends HTMLElement {
     super();
     suit ? this.suit = suit : this.suit;
     rank ? this.rank = rank.toUpperCase() : this.rank;
-    this.cid = rank ? this.rank + this.suit.charAt(0) : 0;
+    // this.cid = rank ? this.rank + this.suit.charAt(0) : 0;
     this.back = back;
     this.init = 1;
   }
@@ -84,6 +84,10 @@ class Card extends HTMLElement {
   get ace(){
     //looks at board to see if ace is higerst card
     return board.getAttribute("ace") == "11"? 11 : 1;
+  }
+
+  get cid(){
+    return this.view == "back" ? this.rank + this.suit.charAt(0).toUpperCase() : this.rank + this.suit.charAt(0) ;
   }
 
   get selected(){

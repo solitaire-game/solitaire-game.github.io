@@ -1,11 +1,27 @@
 import { importCss } from "./functions.js";
 import '../cardpile.js';
+import {RtSocket} from "https://rtdb.nl/rtsocket.js";
 
 class Board extends HTMLElement {
     constructor() {
         super();
         this.moves = [];
         this.init = 1;
+        this.toggleAttribute(`hidden`,true);
+        // document.ws = new RtSocket();
+        document.addEventListener("rtsocket-connected",(e) => this.sendGame(e));
+        document.addEventListener("db-newgame",(e) => this.confirmDB(e));
+        document.addEventListener("db-move",(e) => this.confirmDB(e));
+    }
+
+    sendGame(e){
+        console.log(`it worky`);
+        this.ws.makeGame('solitaire','test','1',this.jsonSaveList);
+    }
+
+    confirmDB(e){
+        console.log(e);
+        if(e.detail.action == 'newgame') this.id = e.detail.response;
     }
 
     connectedCallback() {
@@ -36,6 +52,9 @@ class Board extends HTMLElement {
                     this.addEventListener("touchend", (evt) => this.touchEndHandler(evt));
                 }
             }
+            setTimeout(() => {
+                this.toggleAttribute('hidden',false);   
+            });
             this.init = 0;
         }
     }
@@ -44,12 +63,46 @@ class Board extends HTMLElement {
         return Array.from(document.querySelectorAll("[selected]"));
     }
 
-    get deck(){
+    get cards(){
         return Array.from(document.querySelectorAll(`play-card`));
+    }
+
+    get deck(){
+        return this.querySelector(`[deck]`).deck;
     }
 
     get dragPile(){
         return this.querySelector(`#dragdiv`);
+    }
+    get cardPiles(){
+        return this.querySelectorAll(`card-pile:not(#dragdiv)`);
+    }
+
+    get saveList(){
+        const arr = [];
+        this.cardPiles.forEach(pile => {
+            let sarr = [];
+            pile.cards.forEach(card =>{
+                sarr.push(card.cid);
+            })
+            arr.push(sarr);
+        })
+        return arr;
+    }
+
+    set saveList(list){
+        for(let i = 0; i < list.length;i++){
+            list[i].forEach(cid => {
+                let card = this.deck.find(cid)
+                this.cardPiles[i].append(card);
+                //the last char uppercase state indicates flipped state
+                cid[cid.length -1] == cid[cid.length -1].toLowerCase()?card.view == 'back' && card.flip(): card.view == 'front' && card.flip();
+            })
+        }
+    }
+
+    get jsonSaveList(){
+        return JSON.stringify(this.saveList);
     }
 
     
@@ -70,6 +123,10 @@ class Board extends HTMLElement {
 
     setDefaultOptions(){
         localStorage.setItem("rt-board", JSON.stringify(this.defaultOptions));
+    }
+
+    get ws(){
+        return document.ws;
     }
 
 /*
@@ -217,9 +274,11 @@ class Board extends HTMLElement {
     
     record(from,to,cards,flip){
         this.moves.push([from,to,cards,flip]);
+       if(this.ws)this.ws.move(this.id,JSON.stringify(this.moves.slice(-1)),this.jsonSaveList);
+       if(document.getElementById("undoinfo").innerText.length > 0)document.getElementById("undoinfo").innerText = '';
     }
     
-    checkWin(){
+    checkWin(test = false){
         const backCards = this.querySelectorAll(`.solitairefield .flipped`);
         const drawpile = document.getElementById("drawpile");
         const placepile = document.getElementById('placepile');
@@ -227,26 +286,30 @@ class Board extends HTMLElement {
         //check carddrawamount 
         const drawcheck = (this.optionDraw ==3 && drawpile.cardCount == 0 && placepile.cardCount <= 1)||(this.optionDraw == 1)? true : false;
 
-        if(check && drawcheck){
+        if((check && drawcheck) || test){
             this.completeWin();
-            window.alert("u heeft gewonen");
+            setTimeout(() => {
+                window.alert("u heeft gewonen");
+            },1200);
         }
         return check;
     }
     
     completeWin(){
         this.clearSelected();
-        const cards = this.deck.sort((a,b) =>{ 
+        const cards = this.cards.sort((a,b) =>{ 
             return a.index - b.index;
         });
         for(const card of cards){
             if(!card.parentElement.hasAttribute("suit")){
                 const pile = document.querySelector(`card-pile[suit=${card.suit}]`);
+                if(card.view == 'back')card.flip();
                 card.toggleSelected(true);
-                pile.rules? pile.append(card) : console.error(`card = ${card} the pile its trying = ${pile}`) ;
+                pile.rules? pile.animateCard(card.parentElement,pile,[card],true) : console.error(`card = ${card} the pile its trying = ${pile}`) ;
                 this.clearSelected();
             }
         }
+        if(this.ws) this.ws.endGame(this.id,"win");
     }
 
 /*******************************************************************************************************************************************************************************

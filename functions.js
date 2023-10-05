@@ -2,7 +2,7 @@ console.log("functions.js loaded");
 
 //path relative from the html its being run
 function importCss(path){
-
+ path = `./css/`+path
 let name = path.split('/');
 const last = name.length -1;
 name = name[last].split('.');

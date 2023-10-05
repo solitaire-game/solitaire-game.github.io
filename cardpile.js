@@ -23,14 +23,14 @@ class Pile extends HTMLElement {
         super();
         if (this.hasAttribute("deck")) {
             // make a deck of cards when it has the atribute
-            const deck = new Deck(false);
+            this.deck = new Deck(false);
             switch (this.getAttribute("deck")) {
                 case "new":
-                    this.append(...deck.cards);
+                    this.append(...this.deck.cards);
                     break;
                 case "shuffle":
-                    deck.shuffle();
-                    this.append(...deck.cards);
+                    this.deck.shuffle();
+                    this.append(...this.deck.cards);
                     break
             }
         }
@@ -310,7 +310,7 @@ class Pile extends HTMLElement {
         this.board.record(oldParent,this,cards,flip)
     }
 
-    animateCard(from, to, cards) {
+    animateCard(from, to, cards, slow = false) {
         for (const card of cards) {
             //get cords where the cards is
             const [x0, y0] = [card.getBoundingClientRect().x, card.getBoundingClientRect().y];
@@ -319,7 +319,7 @@ class Pile extends HTMLElement {
             const [x1, y1] = [card.getBoundingClientRect().x, card.getBoundingClientRect().y];
             from.append(card);
             // calcutlate distanse and using that to get a time so cards move at a constant speed 
-            const duration = Math.sqrt(Math.pow(Math.abs(x0 - x1), 2) + Math.pow(Math.abs(y0 - y1), 2)) * 0.5;
+            const duration = Math.sqrt(Math.pow(Math.abs(x0 - x1), 2) + Math.pow(Math.abs(y0 - y1), 2)) * (slow ? 1.5 : 0.5);
             
 
             card.animate(

@@ -7,6 +7,10 @@ rt-board{
     user-select: none;
 }
 
+[hidden]{
+    visibility: hidden;
+}
+
 #placepile{
     justify-self: start;
     grid-column: span 2;
